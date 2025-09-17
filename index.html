@@ -536,26 +536,34 @@
 
         /* Footer */
         .footer {
-            background: linear-gradient(90deg, #9CAF88 0%, #6B8E5A 50%, #4A5D23 100%);
-            color: #fff;
+            background: #2d3748;
+            color: #e2e8f0;
             text-align: center;
             padding: 40px 20px;
-            margin-top: 60px;
+            margin-top: 40px;
+            border-top: 1px solid #e2e8f0;
         }
 
         .footer p {
-            margin-bottom: 10px;
-            opacity: 0.9;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
         }
 
         .footer a {
-            color: #fff;
+            color: #9CAF88;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .footer a:hover {
-            text-decoration: underline;
+            color: #B6C7AD;
+            text-decoration: none;
         }
 
         /* Responsive Design */
@@ -825,7 +833,52 @@
                                     ${daysLeft !== null ? `<span>${daysLeft > 0 ? daysLeft + ' days remaining' : 'Overdue'}</span>` : ''}
                                 </div>
                             </div>
-                            <button class="btn-delete" onclick="deleteTask(${task.id})" title="Delete Task">×</button>
+                            <button class="btn-delete" onclick="deleteProject(${project.id})" title="Delete Project">×</button>
+                        </div>
+                        <p class="project-description">${project.description}</p>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${project.progress}%"></div>
+                            </div>
+                            <div class="progress-info">
+                                <span>${project.progress}% Complete</span>
+                                <button class="btn btn-secondary" onclick="updateProgress(${project.id})" style="padding: 8px 16px; font-size: 0.85rem;">Update Progress</button>
+                            </div>
+                        </div>
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            
+            if (tasks.length === 0) {
+                tasksList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Tasks</h3>
+                        <p>Add tasks to track specific deliverables and action items effectively.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            tasksList.innerHTML = tasks.slice(0, 10).map(task => {
+                const project = projects.find(p => p.id === task.projectId);
+                const projectName = project ? project.name : 'Unassigned';
+                
+                return `
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTask(${task.id})">
+                        <div class="task-content">
+                            <div class="task-title ${task.completed ? 'completed' : ''}">${task.description}</div>
+                            <div class="task-project">${projectName}</div>
+                        </div>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})" title="Delete Task">×</button>
                     </div>
                 `;
             }).join('');
