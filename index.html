@@ -741,10 +741,11 @@
     </footer>
 
     <script>
+        // Global variables
         let projects = [];
         let tasks = [];
 
-        // Initialize with sample data
+        // Sample data initialization
         function loadSampleData() {
             projects = [
                 {
@@ -752,7 +753,7 @@
                     name: "Digital Transformation Initiative",
                     description: "Comprehensive digital overhaul including process automation, system integration, and workflow optimization to enhance operational efficiency and scalability.",
                     priority: "high",
-                    dueDate: "2024-12-15",
+                    dueDate: "2025-12-15",
                     progress: 75,
                     tags: ["Strategy", "Digital", "Process"]
                 },
@@ -761,7 +762,7 @@
                     name: "Market Expansion Analysis",
                     description: "Strategic assessment of new market opportunities, competitive landscape analysis, and comprehensive go-to-market strategy development.",
                     priority: "medium",
-                    dueDate: "2024-11-30",
+                    dueDate: "2025-11-30",
                     progress: 45,
                     tags: ["Market Research", "Strategy", "Analysis"]
                 },
@@ -770,7 +771,7 @@
                     name: "Operational Excellence Program",
                     description: "Implementation of lean methodologies and continuous improvement processes to optimize resource utilization and reduce operational costs.",
                     priority: "medium",
-                    dueDate: "2024-10-25",
+                    dueDate: "2025-10-25",
                     progress: 60,
                     tags: ["Operations", "Efficiency", "Cost Reduction"]
                 }
@@ -788,6 +789,7 @@
             renderDashboard();
         }
 
+        // Main dashboard render function
         function renderDashboard() {
             updateStats();
             renderProjects();
@@ -795,6 +797,7 @@
             updateTaskProjectOptions();
         }
 
+        // Update statistics
         function updateStats() {
             const completedProjects = projects.filter(p => p.progress === 100).length;
             const inProgressProjects = projects.filter(p => p.progress > 0 && p.progress < 100).length;
@@ -805,6 +808,7 @@
             document.getElementById('totalTasks').textContent = tasks.length;
         }
 
+        // Render projects
         function renderProjects() {
             const projectsList = document.getElementById('projectsList');
             
@@ -853,6 +857,7 @@
             }).join('');
         }
 
+        // Render tasks
         function renderTasks() {
             const tasksList = document.getElementById('tasksList');
             
@@ -884,12 +889,14 @@
             }).join('');
         }
 
+        // Update task project options
         function updateTaskProjectOptions() {
             const select = document.getElementById('taskProject');
             select.innerHTML = '<option value="">Select Project (Optional)</option>' + 
                 projects.map(project => `<option value="${project.id}">${project.name}</option>`).join('');
         }
 
+        // Modal functions
         function openProjectModal() {
             document.getElementById('projectModal').style.display = 'block';
         }
@@ -908,39 +915,7 @@
             document.getElementById('taskForm').reset();
         }
 
-        document.getElementById('projectForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const newProject = {
-                id: Date.now(),
-                name: document.getElementById('projectName').value,
-                description: document.getElementById('projectDescription').value,
-                priority: document.getElementById('projectPriority').value,
-                dueDate: document.getElementById('projectDueDate').value,
-                progress: 0,
-                tags: ['New Project']
-            };
-            
-            projects.push(newProject);
-            closeProjectModal();
-            renderDashboard();
-        });
-
-        document.getElementById('taskForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const newTask = {
-                id: Date.now(),
-                description: document.getElementById('taskDescription').value,
-                projectId: parseInt(document.getElementById('taskProject').value) || null,
-                completed: false
-            };
-            
-            tasks.push(newTask);
-            closeTaskModal();
-            renderDashboard();
-        });
-
+        // CRUD functions
         function deleteProject(id) {
             if (confirm('Are you sure you want to delete this project? All associated tasks will also be removed.')) {
                 projects = projects.filter(p => p.id !== id);
@@ -974,6 +949,40 @@
             }
         }
 
+        // Event listeners
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newProject = {
+                id: Date.now(),
+                name: document.getElementById('projectName').value,
+                description: document.getElementById('projectDescription').value,
+                priority: document.getElementById('projectPriority').value,
+                dueDate: document.getElementById('projectDueDate').value,
+                progress: 0,
+                tags: ['New Project']
+            };
+            
+            projects.push(newProject);
+            closeProjectModal();
+            renderDashboard();
+        });
+
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newTask = {
+                id: Date.now(),
+                description: document.getElementById('taskDescription').value,
+                projectId: parseInt(document.getElementById('taskProject').value) || null,
+                completed: false
+            };
+            
+            tasks.push(newTask);
+            closeTaskModal();
+            renderDashboard();
+        });
+
         // Close modals when clicking outside
         window.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal')) {
@@ -981,53 +990,10 @@
             }
         });
 
-        // Initialize the dashboard
-        loadSampleData();
+        // Initialize the dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSampleData();
+        });
     </script>
 </body>
-</html> onclick="deleteProject(${project.id})" title="Delete Project">×</button>
-                        </div>
-                        <p class="project-description">${project.description}</p>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${project.progress}%"></div>
-                            </div>
-                            <div class="progress-info">
-                                <span>${project.progress}% Complete</span>
-                                <button class="btn btn-secondary" onclick="updateProgress(${project.id})" style="padding: 8px 16px; font-size: 0.85rem;">Update Progress</button>
-                            </div>
-                        </div>
-                        <div class="project-tags">
-                            ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderTasks() {
-            const tasksList = document.getElementById('tasksList');
-            
-            if (tasks.length === 0) {
-                tasksList.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No Tasks</h3>
-                        <p>Add tasks to track specific deliverables and action items effectively.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            tasksList.innerHTML = tasks.slice(0, 10).map(task => {
-                const project = projects.find(p => p.id === task.projectId);
-                const projectName = project ? project.name : 'Unassigned';
-                
-                return `
-                    <div class="task-item">
-                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
-                               onchange="toggleTask(${task.id})">
-                        <div class="task-content">
-                            <div class="task-title ${task.completed ? 'completed' : ''}">${task.description}</div>
-                            <div class="task-project">${projectName}</div>
-                        </div>
-                        <button class="btn-delete"
+</html>
