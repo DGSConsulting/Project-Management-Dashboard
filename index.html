@@ -9,9 +9,10 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333333;
       display: flex;
       height: 100vh;
-      color: #333;
     }
 
     /* Sidebar (Tasks) */
@@ -29,25 +30,17 @@
     }
 
     .task-card {
-      background-color: #fff;
+      background-color: #ffffff;
       border: 1px solid #e0e0e0;
       border-radius: 4px;
       padding: 10px;
       margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: grab;
-    }
-
-    .task-card:active {
-      cursor: grabbing;
     }
 
     /* Main Project Section */
     .main-content {
       flex: 1;
-      background-color: #fff;
+      background-color: #ffffff;
       border-right: 1px solid #ddd;
       padding: 20px;
       box-sizing: border-box;
@@ -59,14 +52,11 @@
     }
 
     .project-card {
-      background-color: #fff;
+      background-color: #ffffff;
       border: 1px solid #e0e0e0;
       border-radius: 4px;
       padding: 15px;
       margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
 
     /* Buttons */
@@ -75,10 +65,10 @@
     .btn-primary,
     .btn-secondary {
       background-color: #4CAF50;
-      color: #fff;
+      color: #ffffff;
       border: none;
       border-radius: 4px;
-      padding: 6px 12px;
+      padding: 8px 14px;
       cursor: pointer;
       font-size: 14px;
     }
@@ -88,21 +78,6 @@
     .btn-primary:hover,
     .btn-secondary:hover {
       background-color: #45a049;
-    }
-
-    /* Delete buttons */
-    .delete-btn {
-      background-color: #d9534f;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .delete-btn:hover {
-      background-color: #c9302c;
     }
 
     /* Links */
@@ -115,120 +90,44 @@
       color: #005f99;
       text-decoration: underline;
     }
-
-    /* Drop targets highlight */
-    .drop-target {
-      border: 2px dashed #4CAF50;
-    }
   </style>
 </head>
 <body>
   <!-- Project Section -->
   <div class="main-content">
     <h1>Projects</h1>
-    <div id="projects"></div>
-    <button id="addProjectBtn">Add Project</button>
+
+    <div class="project-card">
+      <h3>Project Alpha</h3>
+      <p>Status: In Progress</p>
+      <button>View Details</button>
+    </div>
+
+    <div class="project-card">
+      <h3>Project Beta</h3>
+      <p>Status: Completed</p>
+      <button>View Details</button>
+    </div>
   </div>
 
   <!-- Task Sidebar -->
   <div class="sidebar">
     <h2>Tasks</h2>
-    <div id="tasks"></div>
-    <input type="text" id="newTaskInput" placeholder="New Task...">
-    <button id="addTaskBtn">Add Task</button>
+
+    <div class="task-card">
+      <p>Finish dashboard CSS cleanup</p>
+      <button>Mark Done</button>
+    </div>
+
+    <div class="task-card">
+      <p>Prepare client report</p>
+      <button>Mark Done</button>
+    </div>
+
+    <div class="task-card">
+      <p>Schedule team meeting</p>
+      <button>Mark Done</button>
+    </div>
   </div>
-
-  <script>
-    // === Project Management ===
-    const projectsDiv = document.getElementById('projects');
-    const addProjectBtn = document.getElementById('addProjectBtn');
-
-    function createProjectCard(name = 'New Project') {
-      const projectCard = document.createElement('div');
-      projectCard.className = 'project-card';
-
-      const title = document.createElement('span');
-      title.textContent = name;
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'delete-btn';
-      deleteBtn.textContent = 'Delete';
-      deleteBtn.addEventListener('click', () => projectCard.remove());
-
-      projectCard.appendChild(title);
-      projectCard.appendChild(deleteBtn);
-
-      return projectCard;
-    }
-
-    addProjectBtn.addEventListener('click', () => {
-      projectsDiv.appendChild(createProjectCard());
-    });
-
-    // === Task Management ===
-    const tasksDiv = document.getElementById('tasks');
-    const addTaskBtn = document.getElementById('addTaskBtn');
-    const newTaskInput = document.getElementById('newTaskInput');
-
-    function createTaskCard(text) {
-      const taskCard = document.createElement('div');
-      taskCard.className = 'task-card';
-
-      const span = document.createElement('span');
-      span.textContent = text;
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'delete-btn';
-      deleteBtn.textContent = 'X';
-      deleteBtn.addEventListener('click', () => taskCard.remove());
-
-      taskCard.appendChild(span);
-      taskCard.appendChild(deleteBtn);
-
-      makeDraggable(taskCard);
-
-      return taskCard;
-    }
-
-    addTaskBtn.addEventListener('click', () => {
-      const taskText = newTaskInput.value.trim();
-      if (taskText) {
-        tasksDiv.appendChild(createTaskCard(taskText));
-        newTaskInput.value = '';
-      }
-    });
-
-    // === Drag & Drop ===
-    function makeDraggable(el) {
-      el.draggable = true;
-      el.addEventListener('dragstart', dragStart);
-      el.addEventListener('dragend', dragEnd);
-    }
-
-    function dragStart(e) {
-      e.dataTransfer.setData('text/plain', e.target.querySelector('span').textContent);
-      e.target.classList.add('dragging');
-    }
-
-    function dragEnd(e) {
-      e.target.classList.remove('dragging');
-    }
-
-    projectsDiv.addEventListener('dragover', e => {
-      e.preventDefault();
-      projectsDiv.classList.add('drop-target');
-    });
-
-    projectsDiv.addEventListener('dragleave', () => {
-      projectsDiv.classList.remove('drop-target');
-    });
-
-    projectsDiv.addEventListener('drop', e => {
-      e.preventDefault();
-      const data = e.dataTransfer.getData('text/plain');
-      projectsDiv.appendChild(createTaskCard(data));
-      projectsDiv.classList.remove('drop-target');
-    });
-  </script>
 </body>
-</html>
+</html
